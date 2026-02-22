@@ -1,0 +1,113 @@
+
+<!doctypehtml>
+<html lang=zh-CN>
+<meta charset=UTF-8>
+<meta content="width=device-width,initial-scale=1"name=viewport>
+<title>音乐</title>
+<style>*{margin:0;padding:0;box-sizing:border-box;font-family:'PingFang SC',sans-serif}
+body{background:linear-gradient(135deg,#f5f7fa,#c3cfe2);line-height:1.6;min-height:100vh;position:relative}
+.header{padding:20px 5%;z-index:10}
+.logo{font-size:24px;font-weight:700;color:#2c3e50}
+.banner{display:flex;align-items:center;justify-content:space-between;padding:80px 5%;min-height:80vh;position:relative}
+.phone-card{position:relative;width:400px;height:700px;background:url(phone-frame.png) no-repeat center/cover;margin-right:50px}
+.screenshots{position:relative;width:100%;height:100%;overflow:hidden}
+.screenshot{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .5s,transform .5s;border-radius:10px}
+.screenshot.active{opacity:1;transform:scale(1.05)}.indicator{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:10px}.dot{width:10px;height:10px;background-color:#ccc;border-radius:50%;cursor:pointer;transition:background-color .3s}
+.dot.active{background-color:#3498db}
+.music-player{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);background:#3498db;color:#fff;padding:10px 20px;border-radius:25px;cursor:pointer;transition:transform .3s;display:flex;align-items:center;gap:8px}
+.music-player.active{transform:translateX(-50%) scale(1.1)}
+.player-icon{font-size:24px}
+.section{padding:80px 5%;text-align:center}
+.section h2{font-size:36px;color:#2c3e50;margin-bottom:40px}
+.feature-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:30px;margin-top:50px}
+.feature-card{background:#fff;padding:30px;border-radius:15px;box-shadow:0 5px 15px rgba(0,0,0,.1);transition:transform .3s}
+.feature-card:hover{transform:translateY(-5px)}
+.feature-card img{width:80px;height:80px;margin-bottom:20px}
+.team-section{background:#f8f9fa}
+.team-grid{display:flex;justify-content:center;gap:50px;margin-top:50px}
+.member-card{text-align:center}
+.member-card img{width:150px;height:150px;border-radius:50%;margin-bottom:10px;border:5px solid #fff;box-shadow:0 0 10px rgba(0,0,0,.1)}
+.download-btn{display:inline-block;background:#2ecc71;color:#fff;padding:15px 40px;border-radius:25px;font-size:18px;margin-top:50px;text-decoration:none;transition:background .3s,transform .3s}
+.download-btn:hover{background:#27ae60;transform:translateY(-2px)}
+.footer{text-align:center;padding:20px;background:#ecf0f1;font-size:14px;border-top:1px solid #ddd}
+.footer a{color:#3498db;text-decoration:none;border-bottom:1px dashed}@media (max-width:768px){.banner{flex-direction:column;align-items:center;text-align:center}
+.phone-card{order:2;margin-right:0;margin-top:50px;width:300px;height:520px}
+.screenshots{top:60px;left:20px;width:260px;height:440px}
+.music-player{bottom:20px}}
+.background{position:fixed;width:100vw;height:100vh;z-index:-1;overflow:hidden}
+.wave{position:absolute;width:200px;height:200px;background:rgba(52,152,219,.1);border-radius:50%;animation:wave-animation 8s linear infinite}@keyframes wave-animation{0%{transform:translate(0,0) scale(1);opacity:.8}100%{transform:translate(400px,600px) scale(2);opacity:.2}}</style>
+<div class=background></div>
+<header class=header>
+<div class=music-player id=musicPlayer>
+<i class=player-icon id=playIcon>▶</i> 背景音乐</div>
+<div class=phone-card>
+<div class=screenshots>
+<audio id=bgMusic src=http://fybk1.fytd.top/upload/2025/2/11/c0ef0c80-30c3-4e5b-a739-a00b0def1ecd.mp3></audio>
+<script>const musicPlayer = document.getElementById('musicPlayer');
+        const playIcon = document.getElementById('playIcon');
+        const audio = document.getElementById('bgMusic');
+        let isPlaying = false;
+
+        musicPlayer.addEventListener('click', () => {
+            isPlaying = !isPlaying;
+            playIcon.textContent = isPlaying ? '⏸' : '▶';
+            musicPlayer.classList.toggle('active', isPlaying);
+
+            if (isPlaying) {
+                audio.play().catch((error) => {
+                    if (error.name === 'NotAllowedError') {
+                        alert('请点击页面任意位置激活音频播放');
+                        isPlaying = false;
+                        playIcon.textContent = '▶';
+                        musicPlayer.classList.remove('active');
+                    }
+                });
+            } else {
+                audio.pause();
+            }
+        });
+
+        const screenshots = document.querySelectorAll('.screenshot');
+        const dots = document.querySelectorAll('.dot');
+        let currentIndex = 0;
+
+        function showSlide(index) {
+            screenshots.forEach((screenshot, i) => {
+                if (i === index) {
+                    screenshot.classList.add('active');
+                } else {
+                    screenshot.classList.remove('active');
+                }
+            });
+            dots.forEach((dot, i) => {
+                if (i === index) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+
+        function nextSlide() {
+            currentIndex = (currentIndex + 1) % screenshots.length;
+            showSlide(currentIndex);
+        }
+
+        function prevSlide() {
+            currentIndex = (currentIndex - 1 + screenshots.length) % screenshots.length;
+            showSlide(currentIndex);
+        }
+
+        // 自动轮播
+        setInterval(nextSlide, 3000);
+
+        // 指示点点击切换
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                showSlide(index);
+                clearInterval(autoSlideInterval);
+                autoSlideInterval = setInterval(nextSlide, 3000);
+            });
+        });
+
+        let autoSlideInterval = setInterval(nextSlide, 3000);</script>
