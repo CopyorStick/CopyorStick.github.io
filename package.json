@@ -1,0 +1,13 @@
+{
+  "name": "personal-blog-backend",
+  "private": true,
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "marked": "^12.0.2"
+  }
+}
