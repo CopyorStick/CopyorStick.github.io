@@ -1,0 +1,10 @@
+
+# Dependencies
+node_modules/
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# Optional: Large files or build artifacts if any
+# dist/
