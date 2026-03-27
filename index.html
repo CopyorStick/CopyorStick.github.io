@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f0f4f8">
+    <title>甜甜の博客</title>
+    <!-- 性能优化：预连接 CDN -->
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://v1.hitokoto.cn">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+    
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="css/style.css?v=9">
+    <!-- 网页图标 -->
+    <link rel="icon" href="images/a.png" type="image/png">
+    <!-- Font Awesome 图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Highlight.js 样式 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
+</head>
+<body>
+    <!-- 全局背景模糊效果 -->
+    <div class="global-blur-bg">
+        <div class="blur-blob blob-1"></div>
+        <div class="blur-blob blob-2"></div>
+        <div class="blur-blob blob-3"></div>
+    </div>
+    <!-- 顶部导航栏 -->
+    <header class="header">
+        <nav class="nav-container">
+            <div class="logo">
+                <a href="#home"> 甜甜</a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#home" class="active"><i class="fas fa-home"></i> 首页</a></li>
+                <li><a href="#articles"><i class="fas fa-book"></i> 文章</a></li>
+                <li><a href="#words"><i class="fas fa-heart"></i> 一些真心话</a></li>
+                <li><a href="#about"><i class="fas fa-user"></i> 关于</a></li>
+            </ul>
+            <div class="nav-right">
+                <button id="theme-toggle" title="切换主题"><i class="fas fa-moon"></i></button>
+                <button id="mobile-menu-toggle" title="菜单"><i class="fas fa-bars"></i></button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- 移动端侧边栏 (移出 header 以避免悬浮样式导致的定位问题) -->
+    <div class="mobile-sidebar">
+        <ul class="mobile-nav-links">
+            <li><a href="#home" class="active"><i class="fas fa-home"></i> 首页</a></li>
+            <li><a href="#articles"><i class="fas fa-book"></i> 文章</a></li>
+            <li><a href="#words"><i class="fas fa-heart"></i> 一些真心话</a></li>
+            <li><a href="#about"><i class="fas fa-user"></i> 关于</a></li>
+        </ul>
+    </div>
+    <div class="sidebar-overlay"></div>
+
+    <div id="page-container">
+        <!-- 首页视图 -->
+        <div id="home" class="page-view">
+            <section class="banner">
+                <div class="banner-content">
+                    <h1 class="banner-title">甜甜の博客</h1>
+                    <p class="banner-subtitle">记录生活的点滴，分享美好的瞬间！</p>
+                </div>
+                <div class="wave-container">
+                    <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                    viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+                        <defs>
+                            <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+                        </defs>
+                        <g class="parallax">
+                            <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(255,255,255,0.7" />
+                            <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(255,255,255,0.5)" />
+                            <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(255,255,255,0.3)" />
+                            <use xlink:href="#gentle-wave" x="48" y="7" fill="#f9f7f2" />
+                        </g>
+                    </svg>
+                </div>
+            </section>
+
+            <main class="container">
+                <!-- 每日一句 -->
+                <section class="daily-quote animate-slide-up">
+                    <div id="quote-container">
+                        <p class="quote-text" id="quote-text">正在加载每日一句...</p>
+                        <p class="quote-author" id="quote-author"></p>
+                    </div>
+                </section>
+
+                <section class="stat-cards">
+                    <div class="stat-card">
+                        <i class="fas fa-book"></i>
+                        <div class="stat-content">
+                            <span class="stat-count" id="count-posts">0</span>
+                            <span class="stat-label">文章数</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-heart"></i>
+                        <div class="stat-content">
+                            <span class="stat-count" id="count-truths">0</span>
+                            <span class="stat-label">真心话数</span>
+                        </div>
+                    </div>
+                    <div class="stat-card search-card">
+                        <i class="fas fa-search"></i>
+                        <div class="stat-content">
+                            <input type="text" id="search-input" placeholder="输入关键词搜索文章...">
+                        </div>
+                    </div>
+                </section>
+
+                <section class="post-list" id="post-list">
+                    <div class="loading">
+                        <i class="fas fa-search" style="font-size: 2rem; color: var(--accent-color); margin-bottom: 1rem; opacity: 0.5;"></i>
+                        <p>请搜索文章...</p>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <!-- 文章视图 -->
+        <div id="articles" class="page-view">
+            <section class="banner small-banner">
+                <div class="banner-content">
+                    <h1 class="banner-title">文章合集</h1>
+                    <p class="banner-subtitle">文字的沉淀与思想的记录</p>
+                </div>
+            </section>
+            <main class="container">
+                <section class="post-list" id="articles-post-list">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>正在加载文章...</p>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <!-- 真心话视图 -->
+        <div id="words" class="page-view">
+            <section class="banner small-banner">
+                <div class="banner-content">
+                    <h1 class="banner-title">一些真心话</h1>
+                    <p class="banner-subtitle">坦诚相待，记录此刻的真实</p>
+                </div>
+            </section>
+            <main class="container">
+                <section class="post-list" id="words-post-list">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>正在加载内容...</p>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <!-- 关于视图 -->
+        <div id="about" class="page-view">
+            <section class="banner small-banner">
+                <div class="banner-content">
+                    <h1 class="banner-title">关于我</h1>
+                    <p class="banner-subtitle">很高兴遇见你！</p>
+                </div>
+            </section>
+            <main class="container">
+                <div class="about-container">
+                    <div class="about-card animate-slide-up">
+                        <div class="about-header">
+                            <div class="about-avatar" style="background-image: url('images/avatar.png')"></div>
+                            <div class="about-info">
+                                <h2> 甜甜</h2>
+                                <p> 开发者 / Web抄袭专家</p>
+                            </div>
+                        </div>
+                        <div class="about-content">
+                            <h3>你好！</h3>
+                            <p>欢迎来到我的个人博客。我是一个热爱探索新技术的开发者，喜欢在互联网上寻找有趣的项目，正所谓看上了就copy一下，然后改改成自己的(°ㅅ°)☝。</p>
+                            <h3>关于本站</h3>
+                            <p>本博客为一个登上技术的奠基石，欢迎大家光临！</p>
+                            <h3>联系原作者</h3>
+                            <div class="social-links">
+                                <span><i class="fab fa-weixin"></i> 微信号: 没有</span>
+                                <span><i class="fab fa-qq"></i> QQ号: 你猜</span>
+                                <span><i class="fas fa-envelope"></i> 邮箱地址：wangyiyun91m78@163.com</span>
+                                <p class="contact-slogan">没事勿扰！</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- 文章详情视图 -->
+        <div id="post" class="page-view">
+            <section class="banner small-banner" id="post-banner">
+                <div class="banner-content">
+                    <h1 class="banner-title" id="post-title">正在加载...</h1>
+                    <div class="post-meta" id="post-meta">
+                        <span id="post-date"></span>
+                        <span id="post-category"></span>
+                    </div>
+                </div>
+            </section>
+            <main class="container">
+                <article class="post-detail-content">
+                    <div id="post-content" class="markdown-body">
+                        <!-- 内容由 JS 动态注入 -->
+                    </div>
+                </article>
+                <div class="post-footer">
+                    <a href="#articles" class="back-btn"><i class="fas fa-list"></i> 返回文章列表</a>
+                    <a href="#home" class="back-btn"><i class="fas fa-home"></i> 返回首页</a>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2026  甜甜's Blog. Powered by Pure HTML/CSS/JS.</p>
+        <p>温柔地对待世界，世界也会温柔待你。</p>
+    </footer>
+
+    <button id="back-to-top" title="回到顶部"><i class="fas fa-arrow-up"></i></button>
+
+
+
+    <div id="announcement-modal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3><i class="fas fa-bullhorn" style="color: var(--accent-color);"></i> 公告</h3>
+            </div>
+            <div class="modal-body" id="announcement-list-display"></div>
+            <div class="modal-footer">
+                <button id="close-announcement-btn" class="modal-btn">知道了</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入 JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script src="js/markdown.js"></script>
+    <script src="js/liquid-glass.js"></script>
+    <script src="js/common.js?v=3"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
