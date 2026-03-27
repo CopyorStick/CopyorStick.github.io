@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f0f4f8">
+    <title>甜甜の博客 | 管理后台</title>
+    <link rel="stylesheet" href="css/style.css?v=9">
+    <link rel="icon" href="头像.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .admin-wrapper {
+            padding-top: 120px;
+            padding-bottom: 80px;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .login-view {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+        .login-stack {
+            width: min(1100px, 100%);
+            display: grid;
+            grid-template-columns: minmax(260px, 1fr) minmax(320px, 420px);
+            gap: 28px;
+            align-items: stretch;
+        }
+        .login-card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 32px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 12px;
+        }
+        .login-card h2 {
+            font-size: 24px;
+            color: var(--accent-color);
+        }
+        .login-card p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        .login-panel {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 32px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            display: grid;
+            gap: 16px;
+        }
+        .login-panel h3 {
+            font-size: 20px;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+        .login-actions {
+            display: flex;
+            justify-content: center;
+        }
+        .admin-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 30px;
+        }
+        .admin-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+        }
+        .admin-card h3 {
+            color: var(--accent-color);
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        .admin-form {
+            display: grid;
+            gap: 16px;
+        }
+        .admin-field label {
+            display: block;
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+        .admin-field input {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            color: var(--text-primary);
+            outline: none;
+            transition: var(--transition);
+            font-size: 14px;
+        }
+        .admin-field input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px var(--accent-soft);
+        }
+        .admin-field select,
+        .admin-field textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            color: var(--text-primary);
+            outline: none;
+            transition: var(--transition);
+        }
+        .admin-field textarea {
+            resize: vertical;
+            min-height: 220px;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        /* 优化 Select 显示效果 */
+        .admin-field select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            padding-right: 40px;
+            cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23555555' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+        }
+        
+        .admin-field select option {
+            background-color: var(--card-bg);
+            color: var(--text-primary);
+            padding: 10px;
+        }
+
+        [data-theme="dark"] .admin-field select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23e0e0e0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        }
+
+        .admin-field select:focus,
+        .admin-field textarea:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px var(--accent-soft);
+        }
+        .admin-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .admin-btn {
+            border: none;
+            padding: 10px 18px;
+            border-radius: 999px;
+            background: var(--accent-color);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .admin-btn.secondary {
+            background: var(--accent-soft);
+            color: var(--accent-color);
+        }
+        .admin-btn.danger {
+            background: #fca5a5;
+            color: #7f1d1d;
+        }
+        .admin-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .admin-status {
+            font-size: 14px;
+            color: var(--text-secondary);
+            min-height: 22px;
+        }
+        .admin-status.success {
+            color: #2d6a4f;
+        }
+        .admin-status.error {
+            color: #b42318;
+        }
+        [data-theme="dark"] .admin-status.success {
+            color: #9be7c4;
+        }
+        [data-theme="dark"] .admin-status.error {
+            color: #ffb4b4;
+        }
+        .admin-meta {
+            display: grid;
+            gap: 10px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        .admin-meta span {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .admin-hint {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        .admin-list {
+            display: grid;
+            gap: 16px;
+        }
+        .admin-item {
+            padding: 18px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            transition: var(--transition);
+        }
+        .admin-item:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+        .admin-item h4 {
+            font-size: 16px;
+            margin-bottom: 6px;
+        }
+        .admin-item p {
+            color: var(--text-secondary);
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+        .admin-item-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        .admin-item-actions button {
+            border: none;
+            padding: 6px 12px;
+            border-radius: 999px;
+            background: var(--accent-soft);
+            color: var(--accent-color);
+            cursor: pointer;
+            font-size: 12px;
+            transition: var(--transition);
+        }
+        .admin-item-actions button:hover {
+            background: var(--accent-color);
+            color: white;
+        }
+        .admin-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .admin-tag {
+            background: var(--accent-soft);
+            color: var(--accent-color);
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+        }
+        .admin-empty {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-secondary);
+        }
+        .admin-section {
+            margin-top: 30px;
+        }
+        .admin-section h3 {
+            margin-bottom: 20px;
+        }
+        .admin-editor-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+        .admin-field-full {
+            grid-column: 1 / -1;
+        }
+        .admin-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 16px;
+        }
+        .admin-stat {
+            padding: 18px;
+            border-radius: 16px;
+            background: var(--accent-soft);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+        .admin-stat strong {
+            display: block;
+            font-size: 24px;
+            margin-top: 4px;
+            color: var(--accent-color);
+        }
+        .admin-footer {
+            margin-top: 50px;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+        #editor-form .admin-field label {
+            font-size: 13px;
+        }
+        #editor-form .admin-actions .admin-btn {
+            font-size: 13px;
+        }
+        .admin-metrics {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+        }
+        .admin-metric {
+            padding: 14px 16px;
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
+            background: var(--accent-soft);
+        }
+        .admin-metric span {
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+        .admin-metric strong {
+            display: block;
+            margin-top: 6px;
+            font-size: 20px;
+            color: var(--accent-color);
+        }
+        .admin-ip-list {
+            margin-top: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .admin-ip-header {
+            margin-top: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        .admin-ip {
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.06);
+            border: 1px solid var(--border-color);
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        }
+        [data-theme="dark"] .admin-ip {
+            background: rgba(255, 255, 255, 0.08);
+        }
+        .admin-ip-empty {
+            background: var(--card-bg);
+        }
+        .admin-ip-list {
+            scrollbar-width: thin;
+        }
+        .admin-ip-list::-webkit-scrollbar {
+            height: 6px;
+        }
+        .admin-ip-list::-webkit-scrollbar-thumb {
+            background: var(--accent-soft);
+            border-radius: 999px;
+        }
+        @media (max-width: 980px) {
+            .admin-grid {
+                grid-template-columns: 1fr;
+            }
+            .login-stack {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 768px) {
+            .admin-wrapper {
+                padding-top: 96px;
+                padding-bottom: 60px;
+            }
+            .login-view {
+                padding: 28px 16px;
+            }
+            .login-card,
+            .login-panel {
+                padding: 24px;
+                border-radius: 20px;
+            }
+            .admin-card {
+                padding: 22px;
+                border-radius: 18px;
+            }
+            .admin-form {
+                gap: 12px;
+            }
+            .admin-field input,
+            .admin-field select,
+            .admin-field textarea {
+                font-size: 15px;
+            }
+            .admin-actions {
+                gap: 10px;
+            }
+            .admin-btn {
+                flex: 1 1 auto;
+                justify-content: center;
+            }
+            .admin-editor-grid {
+                grid-template-columns: 1fr;
+            }
+            .admin-item {
+                padding: 16px;
+            }
+            .admin-item-actions {
+                flex-wrap: wrap;
+            }
+            .admin-item-actions button {
+                flex: 1 1 120px;
+            }
+            .admin-ip-list {
+                gap: 6px;
+                overflow-x: auto;
+                padding-bottom: 4px;
+                flex-wrap: nowrap;
+            }
+            .admin-ip {
+                font-size: 11px;
+            }
+            .small-banner {
+                height: 220px;
+            }
+            .banner-title {
+                font-size: 2.2rem;
+            }
+        }
+        @media (max-width: 560px) {
+            .admin-wrapper {
+                padding-top: 90px;
+            }
+            .admin-actions {
+                flex-direction: column;
+            }
+            .admin-btn {
+                width: 100%;
+            }
+            .admin-card h3 {
+                font-size: 16px;
+            }
+            .admin-metric strong {
+                font-size: 18px;
+            }
+            .admin-stat strong {
+                font-size: 20px;
+            }
+            .banner-title {
+                font-size: 2rem;
+            }
+        }
+        @media (prefers-reduced-data: reduce) {
+            .banner {
+                background-image: none;
+            }
+        }
+        
+        .announcement-type-group {
+            margin-bottom: 16px;
+            display: flex;
+            gap: 32px;
+            flex-wrap: wrap;
+            font-size: 15px;
+            color: var(--text-secondary);
+        }
+
+        .announcement-type-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            color: inherit;
+            white-space: nowrap;
+            user-select: none;
+            transition: color 0.2s;
+        }
+        
+        .announcement-type-label:hover {
+            color: var(--accent-color);
+        }
+
+        .announcement-type-label input[type="radio"] {
+            -webkit-appearance: none;
+            appearance: none;
+            margin: 0;
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            display: grid;
+            place-content: center;
+            flex-shrink: 0;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .announcement-type-label input[type="radio"]::before {
+            content: "";
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            transform: scale(0);
+            transition: 0.12s transform ease-in-out;
+            background-color: var(--accent-color);
+        }
+
+        .announcement-type-label input[type="radio"]:checked {
+            border-color: var(--accent-color);
+        }
+
+        .announcement-type-label input[type="radio"]:checked::before {
+            transform: scale(1);
+        }
+
+        .announcement-type-label:hover input[type="radio"] {
+            border-color: var(--accent-color);
+        }
+
+        .announcement-type-label input[type="radio"]:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px var(--accent-soft);
+            border-color: var(--accent-color);
+        }
+
+        @media (max-width: 640px) {
+            .announcement-type-group {
+                gap: 12px;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-view" id="login-view">
+        <div class="login-stack">
+            <div class="login-card">
+                <h2> 甜甜の博客</h2>
+                <p>欢迎进入管理后台</p>
+                <p>保持与前端同一份温度与秩序</p>
+            </div>
+            <form class="login-panel" id="login-form">
+                <h3>后台登录</h3>
+                <div class="admin-field">
+                    <label for="username">账号</label>
+                    <input id="username" name="username" autocomplete="username" placeholder="请输入用户名">
+                </div>
+                <div class="admin-field">
+                    <label for="password">密码</label>
+                    <input id="password" name="password" type="password" autocomplete="current-password" placeholder="请输入密码">
+                </div>
+                <div class="login-actions">
+                    <button class="admin-btn" type="submit"><i class="fas fa-right-to-bracket"></i> 登录</button>
+                </div>
+                <p class="admin-status" id="login-status"></p>
+            </form>
+        </div>
+    </div>
+
+    <div class="admin-view hidden" id="admin-view">
+        <header class="header">
+            <nav class="nav-container">
+                <div class="logo">
+                    <a href="/backend"> 甜甜</a>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#article-management"><i class="fas fa-pen-to-square"></i> 文章管理</a></li>
+                    <li><a href="#announcement-management"><i class="fas fa-bullhorn"></i> 公告管理</a></li>
+                    <li><a href="#article-list"><i class="fas fa-list"></i> 文章列表</a></li>
+                </ul>
+                <div class="nav-right">
+                    <button id="theme-toggle" title="切换主题"><i class="fas fa-moon"></i></button>
+                </div>
+            </nav>
+        </header>
+
+        <section class="banner small-banner">
+            <div class="banner-content">
+                <h1 class="banner-title">管理后台</h1>
+                <p class="banner-subtitle">与你的前端保持同一份温度</p>
+            </div>
+        </section>
+
+        <main class="container admin-wrapper">
+            <div class="admin-grid">
+                <div class="admin-card">
+                    <h3>账号信息</h3>
+                    <div class="admin-meta">
+                        <div>当前用户：<span id="profile-name">未登录</span></div>
+                        <div>Token 预览：<span id="token-preview">无</span></div>
+                        <div>最近同步：<span id="last-sync">未同步</span></div>
+                    </div>
+                    <div class="admin-metrics">
+                        <div class="admin-metric">
+                            <span>访问次数</span>
+                            <strong id="visit-count">0</strong>
+                        </div>
+                    </div>
+                    <div class="admin-actions" style="margin-top: 20px;">
+                        <button class="admin-btn secondary" type="button" id="refresh-btn"><i class="fas fa-rotate"></i> 刷新数据</button>
+                        <button class="admin-btn secondary" type="button" id="logout-btn"><i class="fas fa-right-from-bracket"></i> 退出</button>
+                    </div>
+                </div>
+
+                <div class="admin-card">
+                    <h3>内容概览</h3>
+                    <div class="admin-stats">
+                        <div class="admin-stat">文章数量<strong id="count-page">0</strong></div>
+                        <div class="admin-stat">真心话数量<strong id="count-truth">0</strong></div>
+                        <div class="admin-stat">总内容<strong id="count-total">0</strong></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="admin-section" id="article-management">
+                <div class="admin-card">
+                    <h3>文章管理</h3>
+                    <form class="admin-form" id="editor-form">
+                        <div class="admin-editor-grid">
+                            <div class="admin-field">
+                                <label for="post-dir">栏目</label>
+                                <select id="post-dir">
+                                    <option value="Page">文章</option>
+                                    <option value="Truth">真心话</option>
+                                </select>
+                            </div>
+                            <div class="admin-field admin-field-full">
+                                <label for="post-upload">导入 Markdown 文件</label>
+                                <input type="file" id="post-upload" accept=".md" style="padding: 10px;">
+                            </div>
+                            <div class="admin-field">
+                                <label for="post-file">文件名</label>
+                                <input id="post-file" placeholder="例如：新文章.md">
+                            </div>
+                            <div class="admin-field">
+                                <label for="post-title">标题</label>
+                                <input id="post-title" placeholder="请输入标题">
+                            </div>
+                            <div class="admin-field">
+                                <label for="post-date">发布日期</label>
+                                <input id="post-date" placeholder="2026-02-10">
+                            </div>
+                            <div class="admin-field">
+                                <label for="post-category">分类</label>
+                                <input id="post-category" placeholder="随笔">
+                            </div>
+                            <div class="admin-field">
+                                <label for="post-tags">标签</label>
+                                <input id="post-tags" placeholder="标签1, 标签2">
+                            </div>
+                            <div class="admin-field admin-field-full">
+                                <label for="post-description">摘要</label>
+                                <input id="post-description" placeholder="简短描述">
+                            </div>
+                            <div class="admin-field admin-field-full">
+                                <label for="post-image">封面图</label>
+                                <input id="post-image" placeholder="images/1.webp">
+                            </div>
+                        </div>
+                        <div class="admin-field admin-field-full">
+                            <label for="post-content">正文内容</label>
+                            <textarea id="post-content" placeholder="在这里输入 Markdown 内容"></textarea>
+                        </div>
+                        <div class="admin-actions">
+                            <button class="admin-btn" type="submit" id="create-btn"><i class="fas fa-plus"></i> 新增</button>
+                            <button class="admin-btn secondary" type="button" id="update-btn"><i class="fas fa-pen"></i> 编辑</button>
+                            <button class="admin-btn danger" type="button" id="delete-btn"><i class="fas fa-trash"></i> 删除</button>
+                            <button class="admin-btn secondary" type="button" id="clear-btn"><i class="fas fa-eraser"></i> 清空</button>
+                        </div>
+                        <p class="admin-status" id="editor-status"></p>
+                    </form>
+                </div>
+            </div>
+
+            <div class="admin-section" id="announcement-management">
+                <div class="admin-card">
+                    <h3>公告管理</h3>
+                    <div class="admin-form">
+                        <div class="admin-field">
+                            <label for="announcement-content">新建公告</label>
+                            
+                            <div class="announcement-type-group">
+                                <label class="announcement-type-label">
+                                    <input type="radio" name="announcement-type" value="permanent" checked> 永久公告
+                                </label>
+                                <label class="announcement-type-label">
+                                    <input type="radio" name="announcement-type" value="scheduled"> 定时发布 (自定义时间)
+                                </label>
+                                <label class="announcement-type-label">
+                                    <input type="radio" name="announcement-type" value="interval"> 区间定时 (开始 - 结束)
+                                </label>
+                            </div>
+
+                            <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-start;">
+                                <input id="announcement-content" placeholder="输入公告内容..." style="flex: 1; min-width: 200px;">
+                                
+                                <div id="time-inputs" style="display: none; gap: 8px; flex-wrap: wrap;">
+                                    <!-- 动态插入时间输入框 -->
+                                </div>
+
+                                <button class="admin-btn" id="add-announcement-btn" type="button"><i class="fas fa-plus"></i> 发布</button>
+                            </div>
+                        </div>
+                        <div class="admin-list" id="announcement-list"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="admin-section" id="article-list">
+                <div class="admin-card">
+                    <h3>文章列表</h3>
+                    <div class="admin-list" id="page-list"></div>
+                </div>
+            </div>
+
+            <div class="admin-section">
+                <div class="admin-card">
+                    <h3>真心话列表</h3>
+                    <div class="admin-list" id="truth-list"></div>
+                </div>
+            </div>
+
+            <div class="admin-footer">甜甜の博客管理后台</div>
+        </main>
+    </div>
+
+    <script src="js/liquid-glass.js"></script>
+    <script src="js/backend.js"></script>
+</body>
+</html>
